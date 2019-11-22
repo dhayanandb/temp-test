@@ -1,0 +1,102 @@
+{
+    "name": "@freighthub/freighthub-int-champ-sdk",
+    "version": "0.1.4",
+    "private": false,
+    "main": "dist/src/index.js",
+    "typings": "dist/src/index.d.ts",
+    "engines": {
+        "node": ">=12",
+        "yarn": ">=1.5.1"
+    },
+    "scripts": {
+        "build": "tsc --rootDir ./",
+        "build:watch": "tsc --rootDir ./ -w",
+        "circular": "madge --circular dist/",
+        "clean": "rm -fr dist",
+        "precoverage": "mkdir -p coverage && touch coverage/coverage-summary.json",
+        "coverage": "TZ=UTC jest --coverage --no-cache spec --reporters=\"default\" \"jest-ratchet\" \"jest-junit\"",
+        "coverage:watch": "yarn coverage --watch",
+        "lint": "tslint -p .",
+        "prepare": "yarn build",
+        "publish:package": "node ./scripts/publish",
+        "postpublish": "PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') && git tag $PACKAGE_VERSION && git push --tags",
+        "prebuild": "yarn clean",
+        "pretest": "yarn lint && yarn build",
+        "release": "npm --no-git-tag-version version",
+        "test": "TZ=UTC jest",
+        "test:watch": "yarn test --watch"
+    },
+    "pre-push": [
+        "lint",
+        "coverage"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/freight-hub/freighthub-int-champ-sdk"
+    },
+    "description": "Data types for CHAMP CargoJSON API",
+    "author": "FreightHub GmbH",
+    "keywords": [],
+    "dependencies": {
+        "path": "^0.12.7",
+        "typescript": "^3.7.2"
+    },
+    "devDependencies": {
+        "@types/jest": "^24.0.22",
+        "@types/node": "^12.12.6",
+        "jest": "~24.9.0",
+        "jest-junit": "^9.0.0",
+        "jest-ratchet": "^2.0.2",
+        "madge": "^3.4.0",
+        "pre-push": "^0.1.1",
+        "semver-compare": "^1.0.0",
+        "ts-jest": "^24.1.0",
+        "tslint": "^5.20.1",
+        "tslint-config-standard": "^9.0.0",
+        "tslint-sonarts": "^1.9.0",
+        "typescript-eslint-parser": "^22.0.0"
+    },
+    "resolutions": {
+        "needle": "2.1.2"
+    },
+    "jest-junit": {
+        "output": "./coverage/junit/junit.xml"
+    },
+    "jest": {
+        "transform": {
+            "^.+\\.tsx?$": "ts-jest"
+        },
+        "collectCoverageFrom": [
+            "src/**/*.{ts,tsx}",
+            "!src/**/Types.ts",
+            "!src/**/DependencyInjection.ts",
+            "!src/**/index.ts",
+            "!src/fixtures/**/*.ts",
+            "!src/env*.ts",
+            "!src/kernel.ts",
+            "!src/logger.ts"
+        ],
+        "coverageReporters": [
+            "text",
+            "lcov",
+            "html",
+            "json-summary"
+        ],
+        "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(tsx?)$",
+        "testPathIgnorePatterns": [
+            "/node_modules/"
+        ],
+        "moduleFileExtensions": [
+            "ts",
+            "tsx",
+            "js",
+            "jsx",
+            "json"
+        ],
+        "globals": {
+            "ts-jest": {
+                "diagnostics": false
+            }
+        }
+    }
+}
